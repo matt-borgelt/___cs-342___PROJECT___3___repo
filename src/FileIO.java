@@ -9,22 +9,6 @@ public class FileIO {
 	
 	
 	public FileIO(){
-		/*
-		File f = new File("level1.txt");
-		try {
-			BufferedReader inFile = new BufferedReader(new FileReader(f));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
-		
-		//Scanner in = new Scanner(new FileReader("level1.txt"));
-		
-		//File file = new File("level1.txt");
-		//Scanner in = new Scanner(file);
-		
-		
 		
 		String line;
 		try{
@@ -33,22 +17,23 @@ public class FileIO {
 			int i=0;
 			while((line = inFile.readLine()) != null){
 				//System.out.println(line);
-				if (i == 0){
-					//System.out.println(line);
-					Layout.setRows(  1 );
+				line.trim();
+				if ( (i == 0) && (line.charAt(1)==' ') ){
+					/* the header of the input file --  rows x columns */
+					
+					Layout.setRows(  Character.getNumericValue(line.charAt(0)) );
+					Layout.setCols(  Character.getNumericValue(line.charAt(3)) );
+		
+				}
+				else{
+					/* input file body */
+					System.out.println(line);
 				}
 				i++;
 			}
 			inFile.close();
 		}catch(IOException e){
 			System.err.println("File not found... :(");
-		}
-		
-		
-		
-		
-		
-		
+		}	
 	}
-	
 }

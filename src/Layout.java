@@ -9,8 +9,8 @@ import java.util.Scanner;
 
 public class Layout {
 	
-	public static final int WIDTH = 300;
-	public static final int HEIGHT = 300;
+	//public static final int WIDTH = 300;
+	//public static final int HEIGHT = 300;
 	
 	public static int rows;
 	public static int cols;
@@ -18,9 +18,15 @@ public class Layout {
 	public static void setRows(int data){
 		rows = data;
 	}
+	public static void setCols(int data){
+		cols = data;
+	}
 	
 	public static int getRows(){
 		return rows;
+	}
+	public static int getCols(){
+		return cols;
 	}
 	
 	public Layout()
@@ -63,11 +69,12 @@ public class Layout {
 		
 		field.setVisible(true);
 		
-		int rows = getRows();
-		System.out.println(rows);
-		
-		
-		
+		System.out.println("# of Rows: " + getRows() );
+		System.out.println("# of Cols: " + getCols() );
+	
+		JButton btn_solve = new JButton("Solve");
+		field.add(btn_solve);
+		btn_solve.setVisible(true);
 		
 		//Scanner in = new Scanner(new FileReader("level1.txt"));
 		//button.setPreferredSize(new Dimension(10, 10));
