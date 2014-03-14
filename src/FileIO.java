@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class FileIO {
-	
+
+	int counter = 0;
 	
 	public FileIO(){
 		ArrayList<String> stringList = new ArrayList<String>();
 
 		String line;
+	
 		try{
 			File f = new File("level1.txt");
 			BufferedReader inFile = new BufferedReader(new FileReader(f));
@@ -28,13 +30,13 @@ public class FileIO {
 				}
 				else{
 					/* input file body */
-					System.out.println(line);
 					stringList.add(line);
-					
+					counter++;
 				}
 				i++;
 			}
 			Layout.setBody(stringList);
+			Layout.setNum(counter);
 			inFile.close();
 		}catch(IOException e){
 			System.err.println("File not found... :(");
