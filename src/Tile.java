@@ -11,9 +11,9 @@ import java.util.Scanner;
 
 public class Tile extends JButton {
 	
-	private int id;
-	private boolean horizontal=false; 
-	private boolean vertical=false;
+	public int id;
+	public boolean horizontal=false; 
+	public boolean vertical=false;
 	
 	public int width;
 	public int height;
@@ -26,8 +26,8 @@ public class Tile extends JButton {
 		ArrayList<String> body = Layout.getBody();
 		//this.direction= body.get(ID);
 		String sub = body.get(ID);
-		this.x= Character.getNumericValue(sub.charAt(0));
-		this.y= Character.getNumericValue(sub.charAt(3));
+		this.x= Character.getNumericValue(sub.charAt(0))-1;
+		this.y= Character.getNumericValue(sub.charAt(3))-1;
 		this.width= Character.getNumericValue(sub.charAt(6));
 		this.height= Character.getNumericValue(sub.charAt(9));
 		
@@ -37,7 +37,9 @@ public class Tile extends JButton {
 		if ((sub.charAt(12)=='v')||(sub.charAt(12)=='b')){
 			this.vertical=true;
 		}
-		this.setText("" + this.id);
+		if(this.id != 0)
+			this.setText("" + this.id);
+		else this.setText("Z");
 		
 	}
 	
