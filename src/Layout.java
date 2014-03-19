@@ -11,6 +11,8 @@ import java.util.Scanner;
 
 public class Layout implements MouseInputListener, MouseMotionListener, ActionListener{
 
+	public static Rectangle[] r;
+	
 	public static int rows;
 	public static int cols;
 	public static int num;
@@ -53,6 +55,14 @@ public class Layout implements MouseInputListener, MouseMotionListener, ActionLi
 	public static void setNum(int data){
 		num = data;
 	}
+	
+	public static Rectangle[] getRect(){
+		return r;
+	}
+	
+	public static void setRect(Rectangle[] data){
+		r = data;
+	}
 
 	public Layout()
 	{
@@ -82,6 +92,10 @@ public class Layout implements MouseInputListener, MouseMotionListener, ActionLi
 		field.setBackground(Color.WHITE);
 
 		Tile[][] tiles = new Tile[nrows][ncols];
+		Rectangle[] r = new Rectangle[numTiles];
+		
+
+		
 
 		field.setBounds(0, 0, 192*2, 192*2);
 
@@ -90,7 +104,7 @@ public class Layout implements MouseInputListener, MouseMotionListener, ActionLi
 			for(int j=0; j<ncols; j++){
 
 				tiles[i][j] = new Tile(currID);
-				currID++;
+				//currID++;
 				tiles[i][j].setOpaque(true);
 
 				tiles[i][j].setBounds(tiles[i][j].x*64, tiles[i][j].y*64, tiles[i][j].width*64, tiles[i][j].height*64);
@@ -101,13 +115,16 @@ public class Layout implements MouseInputListener, MouseMotionListener, ActionLi
 				tiles[i][j].addMouseListener(this);
 
 				field.add(tiles[i][j]);
+				r[currID] = tiles[i][j].getVisibleRect();
+				currID++;
+				
 				// event
 				if(currID >numTiles-1) break;
 				//tiles[i][j].repaint();
 			}
 			if(currID >numTiles-1) break;
 		}
-
+		setRect(r);
 		//field.repaint();
 
 
@@ -183,7 +200,7 @@ public class Layout implements MouseInputListener, MouseMotionListener, ActionLi
 		else{
 			jc.setLocation(jc.getX(), jc.getY()+(64-modY));
 		}
-		System.out.println(""+jc.getY());
+		//System.out.println(""+jc.getY());
 	}
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
@@ -195,7 +212,17 @@ public class Layout implements MouseInputListener, MouseMotionListener, ActionLi
 
 		Tile jc = (Tile)e.getSource();
 		//jc.setLocation(jc.getX()+e.getX()-clicX, jc.getY()+e.getY()-clicY);
-
+		
+		Rectangle rtemp = jc.getBounds();
+		Rectangle[] r = getRect();
+		
+		for(int i=0; i< getNum(); i++){
+			if (rtemp.intersects(r[i])){
+				System.out.println("INTERSECTION\n");
+			}
+		}
+		
+		
 		if(jc.horizontal == true){
 			jc.setLocation(jc.getX()+e.getX()-clicX, jc.getY());
 			if(Math.abs(jc.getX() - x1) > Math.abs(jc.getY() - y1)){
