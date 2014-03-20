@@ -4,22 +4,25 @@ import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.Color;
-import java.io.FileReader;
+//import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
+//import java.util.Random;
+//import java.util.Scanner;
 
 public class Layout implements MouseInputListener, MouseMotionListener, ActionListener{
 
 	public static Rectangle[] r;
-	
+
 	public static int rows;
 	public static int cols;
 	public static int num;
+	private int width;
+	private int height;
 
 	private int clicX = 0;
 	private int clicY = 0;
 	private int y1, x1; //original x and y coordinates of a button being moved
+	private int rightBound, leftBound, upperBound, lowerBound; //Bounds on current tile movement
 
 	public static int[][] board;
 
@@ -55,21 +58,29 @@ public class Layout implements MouseInputListener, MouseMotionListener, ActionLi
 	public static void setNum(int data){
 		num = data;
 	}
-	
+
 	public static Rectangle[] getRect(){
 		return r;
 	}
-	
+
 	public static void setRect(Rectangle[] data){
 		r = data;
 	}
 
-	public Layout()
+	public Layout(int level)
 	{
-		FileIO io = new FileIO();
+		FileIO io = new FileIO(level);
 		int nrows = getRows();
+		this.width = nrows * 64;
 		int ncols = getCols();
+		this.height = ncols * 64;
 		int numTiles = getNum();
+		
+		//Initialize bounds
+		this.rightBound = this.width;
+		this.leftBound = 0;
+		this.upperBound = 0;
+		this.lowerBound = this.height;
 
 		System.out.println("# of Rows: " + getRows() );
 		System.out.println("# of Cols: " + getCols() );
@@ -82,53 +93,13 @@ public class Layout implements MouseInputListener, MouseMotionListener, ActionLi
 		JFrame frame = new JFrame("Slide Puzzle");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//frame.setSize(new Dimension(375, 500));
-		frame.setBounds(0, 0, 512, 568);
+		frame.getContentPane().setPreferredSize(new Dimension(width, height));
+		//frame.setBounds(0, 0, width, height+64);
 		frame.setLocationRelativeTo(null);
-
-
-
-		JPanel field = new JPanel();
-		field.setLayout(null);
-		field.setBackground(Color.WHITE);
-
-		Tile[][] tiles = new Tile[nrows][ncols];
-		Rectangle[] r = new Rectangle[numTiles];
 		
-
-		
-
-		field.setBounds(0, 0, 192*2, 192*2);
-
-		int currID = 0;
-		for(int i=0; i<nrows; i++){
-			for(int j=0; j<ncols; j++){
-
-				tiles[i][j] = new Tile(currID);
-				//currID++;
-				tiles[i][j].setOpaque(true);
-
-				tiles[i][j].setBounds(tiles[i][j].x*64, tiles[i][j].y*64, tiles[i][j].width*64, tiles[i][j].height*64);
-				tiles[i][j].setBackground(new Color(50, 200, 30));
-				//tiles[i][j].setPreferredSize(new Dimension(32,32));
-				//tiles[i][j].setLocation(i*100, j*50);
-				tiles[i][j].addMouseMotionListener(this);
-				tiles[i][j].addMouseListener(this);
-
-				field.add(tiles[i][j]);
-				r[currID] = tiles[i][j].getVisibleRect();
-				currID++;
-				
-				// event
-				if(currID >numTiles-1) break;
-				//tiles[i][j].repaint();
-			}
-			if(currID >numTiles-1) break;
-		}
-		setRect(r);
-		//field.repaint();
-
-
+		//Add buttons
 		JPanel button_panel = new JPanel();
+		button_panel.setBounds(0,0,frame.getWidth(),64);
 		frame.getContentPane().add(button_panel, BorderLayout.NORTH);
 
 		/* solve button */
@@ -143,42 +114,89 @@ public class Layout implements MouseInputListener, MouseMotionListener, ActionLi
 		button_panel.add(btn_hint, BorderLayout.NORTH);
 		btn_hint.setVisible(true);
 
+
+
+		JPanel field = new JPanel();
+		field.setLayout(null);
+		field.setBackground(Color.WHITE);
+
+		Tile[][] tiles = new Tile[nrows][ncols];
+		r = new Rectangle[numTiles];
+
+
+
+
+		field.setBounds(0, 0, 192*2, 192*2);
+
+		int currID = 0;
+		for(int i=0; i<nrows; i++){
+			for(int j=0; j<ncols; j++){
+
+				tiles[i][j] = new Tile(currID);
+				//currID++;
+				tiles[i][j].setOpaque(true);
+
+				tiles[i][j].setBounds(tiles[i][j].x*64, tiles[i][j].y*64, tiles[i][j].width*64, tiles[i][j].height*64);
+				tiles[i][j].addMouseMotionListener(this);
+				tiles[i][j].addMouseListener(this);
+
+				field.add(tiles[i][j]);
+				r[currID] = tiles[i][j].getVisibleRect();
+				currID++;
+
+				// event
+				if(currID >numTiles-1) break;
+				//tiles[i][j].repaint();
+			}
+			if(currID >numTiles-1) break;
+		}
+		//setRect(r);
+		//field.repaint();
+
+
+		
+
 		frame.setResizable(false);
 		frame.getContentPane().add(field, BorderLayout.CENTER);
 		//frame.getContentPane().add(tile1);
-		//frame.pack();
+		frame.pack();
 		frame.setVisible(true);
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		
 
 	}
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		
 
 	}
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		
 
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {
-		JComponent jc = (JComponent)e.getSource();
-		Tile tile = (Tile) e.getSource();
-		int id = tile.id;
-		if (id == 0){
-			System.out.println("You pressed Z");
-		} else System.out.println("You pressed " + id);
+		Tile tile = (Tile)e.getSource();
 
+		Rectangle rtemp = new Rectangle(tile.getBounds());
+		Rectangle[] r = getRect();
+
+		for(int i=0; i< getNum(); i++){
+			if (i != tile.id && rtemp.intersects(r[i])){
+				System.out.println("INTERSECTION BETWEEN "+tile.id+" AND "+i);
+			}
+		}
+		
 		clicX = e.getX();
 		clicY = e.getY();
-		x1 = jc.getX();
-		y1 = jc.getY();
+		x1 = tile.getX(); //starting x position of tile
+		y1 = tile.getY(); //starting y position of tile
 
+		// TODO: loop left, right, up, and down to find bounds for legal moves
 
 	}
 	@Override
@@ -201,54 +219,56 @@ public class Layout implements MouseInputListener, MouseMotionListener, ActionLi
 			jc.setLocation(jc.getX(), jc.getY()+(64-modY));
 		}
 		//System.out.println(""+jc.getY());
+		
+		this.rightBound = this.width;
+		this.leftBound = 0;
+		this.upperBound = 0;
+		this.lowerBound = this.height;
 	}
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
+		
 
 	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		// TODO Give credit to source for jc.getX()+e.getX()-clicX, jc.getY()+e.getY()-clicY
+		Tile tile = (Tile)e.getSource();
 
-		Tile jc = (Tile)e.getSource();
-		//jc.setLocation(jc.getX()+e.getX()-clicX, jc.getY()+e.getY()-clicY);
-		
-		Rectangle rtemp = jc.getBounds();
+		Rectangle rtemp = tile.getBounds();
 		Rectangle[] r = getRect();
-		
+
 		for(int i=0; i< getNum(); i++){
-			if (rtemp.intersects(r[i])){
-				System.out.println("INTERSECTION\n");
+			if (i != tile.id && rtemp.intersects(r[i])){
+				System.out.println("INTERSECTION BETWEEN "+tile.id+" AND "+i+"\n");
 			}
-		}
-		
-		
-		if(jc.horizontal == true){
-			jc.setLocation(jc.getX()+e.getX()-clicX, jc.getY());
-			if(Math.abs(jc.getX() - x1) > Math.abs(jc.getY() - y1)){
-				jc.setLocation(jc.getX(), y1);
-			}
-			if(jc.getX() < 0) jc.setLocation(0, jc.getY());
-			else if(jc.getX() > 512-(64*jc.width)) jc.setLocation(512-(64*jc.width), jc.getY());
 		}
 
-		if(jc.vertical==true){
-			jc.setLocation(jc.getX(), jc.getY()+e.getY()-clicY);
-			if(Math.abs(jc.getX() - x1) < Math.abs(jc.getY() - y1)){
-				jc.setLocation(x1, jc.getY());
+
+		if(tile.horizontal == true){
+			tile.setLocation(tile.getX()+e.getX()-clicX, tile.getY());
+			if(Math.abs(tile.getX() - x1) > Math.abs(tile.getY() - y1)){
+				tile.setLocation(tile.getX(), y1);
 			}
-			if(jc.getY() < 0) jc.setLocation(jc.getX(), 0);
-			else if(jc.getY() > 512-(64*jc.height)) jc.setLocation(jc.getX(), 512-(64*jc.height));
+			if(tile.getX() < leftBound) tile.setLocation(leftBound, tile.getY());
+			else if(tile.getX() > rightBound-(64*tile.width)) tile.setLocation(rightBound-(64*tile.width), tile.getY());
 		}
-		//System.out.println(""+(jc.getX() % 64));
+
+		if(tile.vertical==true){
+			tile.setLocation(tile.getX(), tile.getY()+e.getY()-clicY);
+			if(Math.abs(tile.getX() - x1) < Math.abs(tile.getY() - y1)){
+				tile.setLocation(x1, tile.getY());
+			}
+			if(tile.getY() < upperBound) tile.setLocation(tile.getX(), upperBound);
+			else if(tile.getY() > lowerBound-(64*tile.height)) tile.setLocation(tile.getX(), lowerBound-(64*tile.height));
+		}
+		//System.out.println(""+(tile.getX() % 64));
 
 	}
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 }
-
-
