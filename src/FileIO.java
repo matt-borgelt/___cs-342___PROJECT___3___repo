@@ -9,14 +9,14 @@ import java.util.Scanner;
 public class FileIO {
 
 	int counter = 0;
-	
-	public FileIO(){
+
+	public FileIO(int level){
 		ArrayList<String> stringList = new ArrayList<String>();
 
 		String line;
-	
+
 		try{
-			File f = new File("level1.txt");
+			File f = new File("level"+level+".txt");
 			BufferedReader inFile = new BufferedReader(new FileReader(f));
 			int i=0;
 			while((line = inFile.readLine()) != null){
@@ -26,7 +26,7 @@ public class FileIO {
 					/* the header of the input file --  rows x columns */
 					Layout.setRows(  Character.getNumericValue(line.charAt(0)) );
 					Layout.setCols(  Character.getNumericValue(line.charAt(3)) );
-		
+
 				}
 				else{
 					/* input file body */
