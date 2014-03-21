@@ -43,6 +43,11 @@ public class Tile extends JButton {
 			this.vertical = true;
 			this.setBackground(new Color(255, 100, 255));
 		}
+		else if (sub.charAt(12)=='n'){
+			this.horizontal = false;
+			this.vertical = false;
+			this.setBackground(new Color(10,10,10));
+		}
 		if(this.id != 0)
 			this.setText("" + this.id);
 		else{
