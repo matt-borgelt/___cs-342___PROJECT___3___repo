@@ -26,7 +26,7 @@ public class FileIO {
 					/* the header of the input file --  rows x columns */
 					Layout.setRows(  Character.getNumericValue(line.charAt(0)) );
 					Layout.setCols(  Character.getNumericValue(line.charAt(3)) );
-
+					Layout.lowMoves = Character.getNumericValue(line.charAt(6));
 				}
 				else{
 					/* input file body */
@@ -38,8 +38,10 @@ public class FileIO {
 			Layout.setBody(stringList);
 			Layout.setNum(counter);
 			inFile.close();
+			Layout.fileFound = true;
 		}catch(IOException e){
 			System.err.println("File not found... :(");
+			Layout.fileFound = false;
 		}
 	}
 }
